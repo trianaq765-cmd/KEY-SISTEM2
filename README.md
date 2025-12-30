@@ -1,19 +1,18 @@
 # 🔑 License Key Generator System
 
-Sistem manajemen license key profesional untuk script development dengan fitur lengkap.
+Professional license key management system with random key generation and auto-validation.
 
-## 🚀 Features
+## Features
 
-- ✅ Generate license key unik
-- ✅ Verifikasi license key
-- ✅ Admin dashboard
-- ✅ Aktivasi & deaktivasi key
-- ✅ Tracking expiration date
-- ✅ Multiple key types (Standard, Premium, Trial, Enterprise)
-- ✅ Secure dengan SHA-256 encryption
-- ✅ RESTful API
+- ✅ Random License Key Generation (like Lootlabs)
+- ✅ Auto Validation System
+- ✅ No SQL Required (JSON Database)
+- ✅ Public Key Generator (with rate limiting)
+- ✅ Admin Dashboard
+- ✅ REST API
+- ✅ Secure SHA-256 Encryption
 
-## 📦 Installation
+## Quick Start
 
 ### Local Development
 
@@ -21,12 +20,6 @@ Sistem manajemen license key profesional untuk script development dengan fitur l
 # Clone repository
 git clone <your-repo-url>
 cd license-key-generator
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# atau
-venv\Scripts\activate  # Windows
 
 # Install dependencies
 pip install -r requirements.txt
