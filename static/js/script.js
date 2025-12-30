@@ -78,7 +78,7 @@ async function generateKey(event) {
     }
 }
 
-// Copy Key Function - FIXED WITH MULTIPLE METHODS
+// Copy Key Function - PROFESSIONAL VERSION
 function copyKey() {
     const keyInput = document.getElementById('keyValue');
     const keyValue = keyInput.value;
@@ -87,78 +87,69 @@ function copyKey() {
     if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(keyValue)
             .then(() => {
-                showCopyNotification('✅ License key copied to clipboard!', 'success');
+                showProfessionalNotification('License key copied successfully!', 'success');
             })
             .catch(() => {
-                // Fallback to Method 2
                 fallbackCopyMethod(keyInput);
             });
     } else {
-        // Method 2: Fallback for HTTP or older browsers
         fallbackCopyMethod(keyInput);
     }
 }
 
-// Fallback copy method using execCommand
+// Fallback copy method
 function fallbackCopyMethod(input) {
     try {
-        // Focus the input
         input.focus();
         input.select();
-        input.setSelectionRange(0, 99999); // For mobile devices
+        input.setSelectionRange(0, 99999);
         
-        // Execute copy command
         const successful = document.execCommand('copy');
         
         if (successful) {
-            showCopyNotification('✅ License key copied to clipboard!', 'success');
+            showProfessionalNotification('License key copied successfully!', 'success');
         } else {
-            showCopyNotification('❌ Copy failed. Please select and copy manually.', 'error');
+            showProfessionalNotification('Please select and copy manually', 'error');
         }
         
-        // Remove selection
         window.getSelection().removeAllRanges();
     } catch (err) {
-        console.error('Copy failed:', err);
-        showCopyNotification('❌ Copy failed. Please select and copy manually.', 'error');
+        showProfessionalNotification('Please select and copy manually', 'error');
     }
 }
 
-// Show copy notification
-function showCopyNotification(message, type = 'success') {
+// Professional notification system - Fixed positioning
+function showProfessionalNotification(message, type = 'success') {
     // Remove existing notification
-    const existing = document.querySelector('.copy-notification');
+    const existing = document.querySelector('.professional-toast');
     if (existing) {
         existing.remove();
     }
     
-    // Create notification
-    const notification = document.createElement('div');
-    notification.className = 'copy-notification';
-    notification.textContent = message;
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#10b981' : '#ef4444'};
-        color: white;
-        padding: 1rem 2rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        z-index: 9999;
-        font-weight: 600;
-        animation: slideInRight 0.3s ease-out;
-        font-size: 0.95rem;
+    // Create toast notification
+    const toast = document.createElement('div');
+    toast.className = `professional-toast toast-${type}`;
+    
+    const icon = type === 'success' ? 
+        '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>' :
+        '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>';
+    
+    toast.innerHTML = `
+        <div class="toast-icon">${icon}</div>
+        <div class="toast-message">${message}</div>
     `;
     
-    document.body.appendChild(notification);
+    document.body.appendChild(toast);
     
-    // Auto remove after 3 seconds
+    // Trigger animation
+    setTimeout(() => toast.classList.add('show'), 10);
+    
+    // Auto remove
     setTimeout(() => {
-        notification.style.animation = 'slideOutRight 0.3s ease-in';
+        toast.classList.remove('show');
         setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
+            if (toast.parentNode) {
+                toast.remove();
             }
         }, 300);
     }, 3000);
@@ -307,42 +298,26 @@ async function verifyKey(event) {
     }
 }
 
-// ==================== ANIMATIONS ====================
+// ==================== CONTACT ADMIN MODAL ====================
 
-// Add notification animations to DOM
-if (!document.getElementById('notificationStyles')) {
-    const style = document.createElement('style');
-    style.id = 'notificationStyles';
-    style.textContent = `
-        @keyframes slideInRight {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes slideOutRight {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .copy-notification {
-                left: 10px !important;
-                right: 10px !important;
-                top: 10px !important;
-            }
-        }
-    `;
-    document.head.appendChild(style);
+function showContactModal() {
+    const modal = document.getElementById('contactModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
+}
+
+function closeContactModal() {
+    const modal = document.getElementById('contactModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('contactModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
 }
