@@ -13,7 +13,7 @@
             <div class="nav-links">
                 <a href="/">Home</a>
                 <a href="/get-key">Get Key</a>
-                <a href="/verify">Verify Key</a>
+                <a href="/verify">Verify</a>
                 <a href="/admin">Admin</a>
             </div>
         </div>
@@ -25,7 +25,6 @@
                 <h2>🎁 Generate Your Free License Key</h2>
                 <p class="subtitle">Complete the steps below to get your license key</p>
                 
-                <!-- Step 1: Enter Name -->
                 <div id="step1" class="step-container">
                     <div class="step-number">Step 1 of 3</div>
                     <h3>Enter Your Name</h3>
@@ -38,7 +37,6 @@
                     </form>
                 </div>
 
-                <!-- Step 2: Verification (Like Lootlabs) -->
                 <div id="step2" class="step-container" style="display: none;">
                     <div class="step-number">Step 2 of 3</div>
                     <h3>🔐 Verify You're Human</h3>
@@ -60,7 +58,6 @@
                         </div>
                     </div>
                     
-                    <!-- Captcha Modal -->
                     <div id="captchaModal" class="modal" style="display: none;">
                         <div class="modal-content">
                             <h3>Solve This Math Problem</h3>
@@ -71,7 +68,6 @@
                         </div>
                     </div>
                     
-                    <!-- Timer Modal -->
                     <div id="timerModal" class="modal" style="display: none;">
                         <div class="modal-content">
                             <h3>⏱️ Please Wait</h3>
@@ -84,7 +80,6 @@
                     </div>
                 </div>
 
-                <!-- Step 3: Get Key -->
                 <div id="step3" class="step-container" style="display: none;">
                     <div class="step-number">Step 3 of 3</div>
                     <h3>✅ Your License Key is Ready!</h3>
@@ -92,9 +87,7 @@
                     <div class="key-result">
                         <div class="key-display-large">
                             <input type="text" id="generatedKeyValue" readonly>
-                            <button onclick="copyGeneratedKey()" class="btn btn-success">
-                                📋 Copy Key
-                            </button>
+                            <button onclick="copyGeneratedKey()" class="btn btn-success">📋 Copy Key</button>
                         </div>
                         
                         <div class="key-details">
@@ -134,7 +127,6 @@
                 </div>
             </div>
 
-            <!-- Rate Limit Warning -->
             <div id="rateLimitWarning" class="rate-limit-warning" style="display: none;">
                 <h3>⏳ Rate Limit Reached</h3>
                 <p>You've already generated a key today. Please try again in:</p>
