@@ -1,7 +1,6 @@
 let userName = '';
 let mathAnswer = 0;
 
-// Step 1: Submit Name
 function submitName(event) {
     event.preventDefault();
     userName = document.getElementById('user_name').value.trim();
@@ -11,11 +10,9 @@ function submitName(event) {
         return;
     }
     
-    // Check rate limit
     checkRateLimit();
 }
 
-// Check if user already generated key today
 async function checkRateLimit() {
     const lastGenerated = localStorage.getItem('lastKeyGenerated');
     
@@ -30,7 +27,6 @@ async function checkRateLimit() {
         }
     }
     
-    // Proceed to verification
     document.getElementById('step1').style.display = 'none';
     document.getElementById('step2').style.display = 'block';
 }
@@ -54,13 +50,10 @@ function updateRateLimitTimer(hoursRemaining) {
         
         hoursRemaining -= 1/3600;
         
-        if (hoursRemaining <= 0) {
-            location.reload();
-        }
+        if (hoursRemaining <= 0) location.reload();
     }, 1000);
 }
 
-// Verification Methods
 function completeVerification(method) {
     if (method === 'captcha') {
         showCaptcha();
@@ -69,7 +62,6 @@ function completeVerification(method) {
     }
 }
 
-// Captcha Verification
 function showCaptcha() {
     const num1 = Math.floor(Math.random() * 20) + 1;
     const num2 = Math.floor(Math.random() * 20) + 1;
@@ -96,7 +88,6 @@ function closeCaptcha() {
     document.getElementById('captchaAnswer').value = '';
 }
 
-// Timer Verification
 function showTimer() {
     document.getElementById('timerModal').style.display = 'flex';
     let timeLeft = 10;
@@ -106,7 +97,6 @@ function showTimer() {
         document.getElementById('timerDisplay').textContent = timeLeft;
         document.getElementById('countdown').textContent = timeLeft;
         
-        // Update progress bar
         const progress = ((10 - timeLeft) / 10) * 100;
         document.getElementById('progressFill').style.width = progress + '%';
         
@@ -118,14 +108,11 @@ function showTimer() {
     }, 1000);
 }
 
-// Generate Key via API
 async function generateKey() {
     try {
         const response = await fetch('/api/public-generate', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 customer_name: userName,
                 key_type: 'TRIAL'
@@ -135,10 +122,7 @@ async function generateKey() {
         const data = await response.json();
         
         if (data.success) {
-            // Save to localStorage for rate limiting
             localStorage.setItem('lastKeyGenerated', new Date().toISOString());
-            
-            // Show key
             displayGeneratedKey(data);
         } else {
             alert('Error generating key: ' + data.message);
@@ -161,7 +145,6 @@ function copyGeneratedKey() {
     const keyInput = document.getElementById('generatedKeyValue');
     keyInput.select();
     document.execCommand('copy');
-    
     alert('✅ License key copied to clipboard!');
 }
 
