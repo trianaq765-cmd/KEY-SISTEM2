@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify License Key</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>🔑 Verify License</h1>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/verify">Verify Key</a>
+                <a href="/admin">Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="verify-container">
+            <div class="verify-box">
+                <h2>Verify Your License Key</h2>
+                <p>Masukkan license key Anda untuk verifikasi</p>
+                
+                <form id="verifyForm" onsubmit="verifyKey(event)">
+                    <div class="form-group">
+                        <label>License Key</label>
+                        <input type="text" id="license_key" placeholder="XXX-XXXX-XXXX-XXXX-XXXX" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Verify Key</button>
+                </form>
+
+                <div id="verifyResult" class="verify-result" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
