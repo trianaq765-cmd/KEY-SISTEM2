@@ -1,4 +1,3 @@
-// Login Function
 async function login(event) {
     event.preventDefault();
     
@@ -9,9 +8,7 @@ async function login(event) {
     try {
         const response = await fetch('/api/login', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
         
@@ -20,9 +17,7 @@ async function login(event) {
         if (data.success) {
             messageDiv.className = 'message success';
             messageDiv.textContent = 'Login successful! Redirecting...';
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
+            setTimeout(() => window.location.reload(), 1000);
         } else {
             messageDiv.className = 'message error';
             messageDiv.textContent = data.message || 'Login failed';
@@ -33,7 +28,6 @@ async function login(event) {
     }
 }
 
-// Logout Function
 async function logout() {
     try {
         await fetch('/api/logout', { method: 'POST' });
@@ -43,7 +37,6 @@ async function logout() {
     }
 }
 
-// Generate Key Function
 async function generateKey(event) {
     event.preventDefault();
     
@@ -57,9 +50,7 @@ async function generateKey(event) {
     try {
         const response = await fetch('/api/generate', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
         });
         
@@ -74,10 +65,7 @@ async function generateKey(event) {
             keyInfo.textContent = `Expires: ${new Date(data.expires_at).toLocaleDateString()}`;
             keyDisplay.style.display = 'block';
             
-            // Reset form
             document.getElementById('generateForm').reset();
-            
-            // Reload keys table
             loadKeys();
         }
     } catch (error) {
@@ -85,16 +73,13 @@ async function generateKey(event) {
     }
 }
 
-// Copy Key to Clipboard
 function copyKey() {
     const keyValue = document.getElementById('keyValue');
     keyValue.select();
     document.execCommand('copy');
-    
-    alert('License key copied to clipboard!');
+    alert('✅ License key copied to clipboard!');
 }
 
-// Load All Keys
 async function loadKeys() {
     try {
         const response = await fetch('/api/keys');
@@ -151,61 +136,37 @@ async function loadKeys() {
             `;
         });
         
-        tableHTML += `
-                    </tbody>
-                </table>
-            </div>
-        `;
-        
+        tableHTML += '</tbody></table></div>';
         tableContainer.innerHTML = tableHTML;
     } catch (error) {
         console.error('Error loading keys:', error);
     }
 }
 
-// Toggle Key Status
 async function toggleKey(keyHash) {
-    if (!confirm('Are you sure you want to toggle this key status?')) {
-        return;
-    }
+    if (!confirm('Are you sure you want to toggle this key status?')) return;
     
     try {
-        const response = await fetch(`/api/keys/${keyHash}/toggle`, {
-            method: 'POST'
-        });
-        
+        const response = await fetch(`/api/keys/${keyHash}/toggle`, { method: 'POST' });
         const data = await response.json();
-        
-        if (data.success) {
-            loadKeys();
-        }
+        if (data.success) loadKeys();
     } catch (error) {
         alert('Error toggling key: ' + error.message);
     }
 }
 
-// Delete Key
 async function deleteKey(keyHash) {
-    if (!confirm('Are you sure you want to delete this key? This action cannot be undone.')) {
-        return;
-    }
+    if (!confirm('Are you sure you want to delete this key? This action cannot be undone.')) return;
     
     try {
-        const response = await fetch(`/api/keys/${keyHash}`, {
-            method: 'DELETE'
-        });
-        
+        const response = await fetch(`/api/keys/${keyHash}`, { method: 'DELETE' });
         const data = await response.json();
-        
-        if (data.success) {
-            loadKeys();
-        }
+        if (data.success) loadKeys();
     } catch (error) {
         alert('Error deleting key: ' + error.message);
     }
 }
 
-// Verify Key Function
 async function verifyKey(event) {
     event.preventDefault();
     
@@ -215,14 +176,11 @@ async function verifyKey(event) {
     try {
         const response = await fetch('/api/verify', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ license_key: licenseKey })
         });
         
         const data = await response.json();
-        
         resultDiv.style.display = 'block';
         
         if (data.valid) {
@@ -250,17 +208,11 @@ async function verifyKey(event) {
             `;
         } else {
             resultDiv.className = 'verify-result invalid';
-            resultDiv.innerHTML = `
-                <h3>❌ Invalid License Key</h3>
-                <p>${data.message}</p>
-            `;
+            resultDiv.innerHTML = `<h3>❌ Invalid License Key</h3><p>${data.message}</p>`;
         }
     } catch (error) {
         resultDiv.style.display = 'block';
         resultDiv.className = 'verify-result invalid';
-        resultDiv.innerHTML = `
-            <h3>❌ Error</h3>
-            <p>${error.message}</p>
-        `;
+        resultDiv.innerHTML = `<h3>❌ Error</h3><p>${error.message}</p>`;
     }
 }
