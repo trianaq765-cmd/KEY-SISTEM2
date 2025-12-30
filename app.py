@@ -20,8 +20,11 @@ os.makedirs('database', exist_ok=True)
 def load_keys():
     """Load keys from JSON database"""
     if os.path.exists(DB_FILE):
-        with open(DB_FILE, 'r') as f:
-            return json.load(f)
+        try:
+            with open(DB_FILE, 'r') as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            return {'keys': []}
     return {'keys': []}
 
 def save_keys(data):
@@ -65,6 +68,11 @@ def verify_page():
     """Verification page"""
     return render_template('verify.html')
 
+@app.route('/get-key')
+def get_key_page():
+    """Public key generation page"""
+    return render_template('get-key.html')
+
 @app.route('/api/login', methods=['POST'])
 def login():
     """Admin login"""
@@ -87,7 +95,7 @@ def logout():
 @app.route('/api/generate', methods=['POST'])
 @login_required
 def generate_key():
-    """Generate new license key"""
+    """Generate new license key (Admin only)"""
     data = request.json
     customer_name = data.get('customer_name', 'Unknown')
     duration_days = int(data.get('duration_days', 30))
@@ -105,7 +113,41 @@ def generate_key():
         'key_type': key_type,
         'status': 'active',
         'activations': 0,
-        'max_activations': int(data.get('max_activations', 1))
+        'max_activations': int(data.get('max_activations', 1)),
+        'public_generated': False
+    }
+    
+    db = load_keys()
+    db['keys'].append(key_data)
+    save_keys(db)
+    
+    return jsonify({
+        'success': True,
+        'license_key': license_key,
+        'expires_at': key_data['expires_at']
+    })
+
+@app.route('/api/public-generate', methods=['POST'])
+def public_generate_key():
+    """Public API to generate trial keys"""
+    data = request.json
+    customer_name = data.get('customer_name', 'Anonymous')
+    
+    # Generate trial key (7 days, 1 activation)
+    license_key = generate_license_key(prefix="TRL")
+    
+    key_data = {
+        'key': license_key,
+        'key_hash': hash_key(license_key),
+        'customer_name': customer_name,
+        'created_at': datetime.now().isoformat(),
+        'expires_at': (datetime.now() + timedelta(days=7)).isoformat(),
+        'duration_days': 7,
+        'key_type': 'TRIAL',
+        'status': 'active',
+        'activations': 0,
+        'max_activations': 1,
+        'public_generated': True
     }
     
     db = load_keys()
@@ -200,11 +242,11 @@ def get_keys():
     """Get all license keys"""
     db = load_keys()
     
-    # Don't send the actual keys, only hashes
+    # Don't send the actual keys, only masked version
     safe_keys = []
     for key in db['keys']:
         safe_key = key.copy()
-        safe_key['key'] = safe_key['key'][:8] + '****'  # Mask key
+        safe_key['key'] = safe_key['key'][:8] + '****'
         safe_keys.append(safe_key)
     
     return jsonify({'keys': safe_keys})
