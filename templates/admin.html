@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - License Key Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1>🔑 Admin Panel</h1>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/verify">Verify Key</a>
+                {% if logged_in %}
+                <a href="#" onclick="logout()">Logout</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% if not logged_in %}
+        <!-- Login Form -->
+        <div class="login-container">
+            <div class="login-box">
+                <h2>Admin Login</h2>
+                <form id="loginForm" onsubmit="login(event)">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                </form>
+                <div id="loginMessage" class="message"></div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Admin Dashboard -->
+        <div class="admin-dashboard">
+            <h2>Generate New License Key</h2>
+            <form id="generateForm" onsubmit="generateKey(event)" class="generate-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Customer Name</label>
+                        <input type="text" id="customer_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Key Type</label>
+                        <select id="key_type">
+                            <option value="STANDARD">Standard</option>
+                            <option value="PREMIUM">Premium</option>
+                            <option value="TRIAL">Trial</option>
+                            <option value="ENTERPRISE">Enterprise</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Duration (Days)</label>
+                        <input type="number" id="duration_days" value="30" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Max Activations</label>
+                        <input type="number" id="max_activations" value="1" min="1" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Generate Key</button>
+            </form>
+
+            <div id="generatedKey" class="generated-key" style="display: none;">
+                <h3>✅ Key Generated Successfully!</h3>
+                <div class="key-display">
+                    <input type="text" id="keyValue" readonly>
+                    <button onclick="copyKey()" class="btn btn-primary">Copy</button>
+                </div>
+                <p class="key-info" id="keyInfo"></p>
+            </div>
+
+            <h2>All License Keys</h2>
+            <div id="keysTable">
+                <p class="loading">Loading keys...</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        {% if logged_in %}
+        loadKeys();
+        {% endif %}
+    </script>
+</body>
+</html>
