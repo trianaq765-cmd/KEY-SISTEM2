@@ -1,3 +1,6 @@
+// ==================== ADMIN PANEL FUNCTIONS ====================
+
+// Login Function
 async function login(event) {
     event.preventDefault();
     
@@ -28,6 +31,7 @@ async function login(event) {
     }
 }
 
+// Logout Function
 async function logout() {
     try {
         await fetch('/api/logout', { method: 'POST' });
@@ -37,6 +41,7 @@ async function logout() {
     }
 }
 
+// Generate Key Function (Admin)
 async function generateKey(event) {
     event.preventDefault();
     
@@ -73,13 +78,93 @@ async function generateKey(event) {
     }
 }
 
+// Copy Key Function - FIXED WITH MULTIPLE METHODS
 function copyKey() {
-    const keyValue = document.getElementById('keyValue');
-    keyValue.select();
-    document.execCommand('copy');
-    alert('✅ License key copied to clipboard!');
+    const keyInput = document.getElementById('keyValue');
+    const keyValue = keyInput.value;
+    
+    // Method 1: Modern Clipboard API (for HTTPS)
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(keyValue)
+            .then(() => {
+                showCopyNotification('✅ License key copied to clipboard!', 'success');
+            })
+            .catch(() => {
+                // Fallback to Method 2
+                fallbackCopyMethod(keyInput);
+            });
+    } else {
+        // Method 2: Fallback for HTTP or older browsers
+        fallbackCopyMethod(keyInput);
+    }
 }
 
+// Fallback copy method using execCommand
+function fallbackCopyMethod(input) {
+    try {
+        // Focus the input
+        input.focus();
+        input.select();
+        input.setSelectionRange(0, 99999); // For mobile devices
+        
+        // Execute copy command
+        const successful = document.execCommand('copy');
+        
+        if (successful) {
+            showCopyNotification('✅ License key copied to clipboard!', 'success');
+        } else {
+            showCopyNotification('❌ Copy failed. Please select and copy manually.', 'error');
+        }
+        
+        // Remove selection
+        window.getSelection().removeAllRanges();
+    } catch (err) {
+        console.error('Copy failed:', err);
+        showCopyNotification('❌ Copy failed. Please select and copy manually.', 'error');
+    }
+}
+
+// Show copy notification
+function showCopyNotification(message, type = 'success') {
+    // Remove existing notification
+    const existing = document.querySelector('.copy-notification');
+    if (existing) {
+        existing.remove();
+    }
+    
+    // Create notification
+    const notification = document.createElement('div');
+    notification.className = 'copy-notification';
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#10b981' : '#ef4444'};
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        z-index: 9999;
+        font-weight: 600;
+        animation: slideInRight 0.3s ease-out;
+        font-size: 0.95rem;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-in';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Load All Keys
 async function loadKeys() {
     try {
         const response = await fetch('/api/keys');
@@ -143,6 +228,7 @@ async function loadKeys() {
     }
 }
 
+// Toggle Key Status
 async function toggleKey(keyHash) {
     if (!confirm('Are you sure you want to toggle this key status?')) return;
     
@@ -155,6 +241,7 @@ async function toggleKey(keyHash) {
     }
 }
 
+// Delete Key
 async function deleteKey(keyHash) {
     if (!confirm('Are you sure you want to delete this key? This action cannot be undone.')) return;
     
@@ -167,6 +254,9 @@ async function deleteKey(keyHash) {
     }
 }
 
+// ==================== VERIFY KEY FUNCTIONS ====================
+
+// Verify Key Function
 async function verifyKey(event) {
     event.preventDefault();
     
@@ -215,4 +305,44 @@ async function verifyKey(event) {
         resultDiv.className = 'verify-result invalid';
         resultDiv.innerHTML = `<h3>❌ Error</h3><p>${error.message}</p>`;
     }
+}
+
+// ==================== ANIMATIONS ====================
+
+// Add notification animations to DOM
+if (!document.getElementById('notificationStyles')) {
+    const style = document.createElement('style');
+    style.id = 'notificationStyles';
+    style.textContent = `
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .copy-notification {
+                left: 10px !important;
+                right: 10px !important;
+                top: 10px !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
 }
