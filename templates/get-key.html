@@ -21,122 +21,148 @@
 
     <div class="container">
         <div class="get-key-container">
-            <div class="get-key-box">
-                <h2>🎁 Generate Your Free License Key</h2>
-                <p class="subtitle">Complete the steps below to get your license key</p>
-                
-                <div id="step1" class="step-container">
-                    <div class="step-number">Step 1 of 3</div>
-                    <h3>Enter Your Name</h3>
-                    <form id="nameForm" onsubmit="submitName(event)">
-                        <div class="form-group">
-                            <label>Your Name</label>
-                            <input type="text" id="user_name" placeholder="Enter your name" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block">Continue</button>
-                    </form>
+            <!-- Initial State -->
+            <div id="initialState" class="get-key-box">
+                <div class="key-hero">
+                    <div class="hero-icon">🎁</div>
+                    <h2>Get Your Free Trial License Key</h2>
+                    <p class="subtitle">Click the button below to instantly generate your license key</p>
                 </div>
 
-                <div id="step2" class="step-container" style="display: none;">
-                    <div class="step-number">Step 2 of 3</div>
-                    <h3>🔐 Verify You're Human</h3>
-                    <p>Complete one of the verification methods below:</p>
-                    
-                    <div class="verification-methods">
-                        <div class="verify-card" onclick="completeVerification('captcha')">
-                            <div class="verify-icon">🤖</div>
-                            <h4>Simple Captcha</h4>
-                            <p>Solve a simple math problem</p>
-                            <button class="btn btn-primary">Verify Now</button>
-                        </div>
-                        
-                        <div class="verify-card" onclick="completeVerification('wait')">
-                            <div class="verify-icon">⏱️</div>
-                            <h4>Wait Timer</h4>
-                            <p>Wait 10 seconds (easiest)</p>
-                            <button class="btn btn-secondary">Start Timer</button>
-                        </div>
+                <div class="key-features">
+                    <div class="feature-item">
+                        <span class="feature-icon">⚡</span>
+                        <span>Instant Generation</span>
                     </div>
-                    
-                    <div id="captchaModal" class="modal" style="display: none;">
-                        <div class="modal-content">
-                            <h3>Solve This Math Problem</h3>
-                            <div id="mathProblem" class="math-problem"></div>
-                            <input type="number" id="captchaAnswer" placeholder="Enter answer">
-                            <button onclick="checkCaptcha()" class="btn btn-primary">Submit</button>
-                            <button onclick="closeCaptcha()" class="btn btn-secondary">Cancel</button>
-                        </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📅</span>
+                        <span>7 Days Valid</span>
                     </div>
-                    
-                    <div id="timerModal" class="modal" style="display: none;">
-                        <div class="modal-content">
-                            <h3>⏱️ Please Wait</h3>
-                            <div class="timer-display" id="timerDisplay">10</div>
-                            <p>Your key will be generated in <span id="countdown">10</span> seconds...</p>
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="progressFill"></div>
-                            </div>
-                        </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🔐</span>
+                        <span>Secure & Encrypted</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">💻</span>
+                        <span>1 Device Activation</span>
                     </div>
                 </div>
 
-                <div id="step3" class="step-container" style="display: none;">
-                    <div class="step-number">Step 3 of 3</div>
-                    <h3>✅ Your License Key is Ready!</h3>
-                    
-                    <div class="key-result">
-                        <div class="key-display-large">
-                            <input type="text" id="generatedKeyValue" readonly>
-                            <button onclick="copyGeneratedKey()" class="btn btn-success">📋 Copy Key</button>
-                        </div>
-                        
-                        <div class="key-details">
-                            <div class="detail-row">
-                                <span class="label">👤 Name:</span>
-                                <span id="keyUserName"></span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="label">🎫 Type:</span>
-                                <span class="badge badge-trial">FREE TRIAL</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="label">📅 Valid Until:</span>
-                                <span id="keyExpiry"></span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="label">🔄 Activations:</span>
-                                <span>1 device</span>
-                            </div>
-                        </div>
+                <button onclick="checkAndGenerate()" class="btn btn-primary btn-large btn-block" id="generateBtn">
+                    <span class="btn-icon">🚀</span> Generate Free License Key
+                </button>
 
-                        <div class="key-actions">
-                            <a href="/verify" class="btn btn-primary">Verify This Key</a>
-                            <button onclick="resetForm()" class="btn btn-secondary">Generate Another</button>
-                        </div>
-                    </div>
-
-                    <div class="warning-box">
-                        <strong>⚠️ Important:</strong>
-                        <ul>
-                            <li>Save this key securely</li>
-                            <li>This is a trial key valid for 7 days</li>
-                            <li>You can only generate 1 key per day</li>
-                            <li>For premium keys, contact admin</li>
-                        </ul>
-                    </div>
+                <div class="info-note">
+                    <strong>ℹ️ Note:</strong> You can generate 1 free key every 24 hours
                 </div>
             </div>
 
-            <div id="rateLimitWarning" class="rate-limit-warning" style="display: none;">
-                <h3>⏳ Rate Limit Reached</h3>
-                <p>You've already generated a key today. Please try again in:</p>
-                <div class="countdown-timer" id="rateLimitTimer">23:59:59</div>
-                <p class="small-text">Want more keys? Contact admin for premium access</p>
+            <!-- Loading State -->
+            <div id="loadingState" class="get-key-box" style="display: none;">
+                <div class="loading-animation">
+                    <div class="spinner"></div>
+                    <h3>Generating Your License Key...</h3>
+                    <p>Please wait a moment</p>
+                </div>
+            </div>
+
+            <!-- Success State -->
+            <div id="successState" class="get-key-box" style="display: none;">
+                <div class="success-header">
+                    <div class="success-icon">✅</div>
+                    <h2>License Key Generated!</h2>
+                    <p class="subtitle">Your free trial key is ready to use</p>
+                </div>
+
+                <div class="key-result">
+                    <div class="key-label">Your License Key:</div>
+                    <div class="key-display-large">
+                        <input type="text" id="generatedKeyValue" readonly>
+                        <button onclick="copyGeneratedKey()" class="btn btn-success" id="copyBtn">
+                            📋 Copy
+                        </button>
+                    </div>
+                    
+                    <div class="key-details">
+                        <div class="detail-row">
+                            <span class="label">🎫 Type:</span>
+                            <span class="badge badge-trial">FREE TRIAL</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">📅 Generated:</span>
+                            <span id="keyGenerated"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">⏰ Valid Until:</span>
+                            <span id="keyExpiry"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">🔄 Max Activations:</span>
+                            <span>1 device</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="label">📊 Status:</span>
+                            <span class="badge badge-active">ACTIVE</span>
+                        </div>
+                    </div>
+
+                    <div class="key-actions">
+                        <a href="/verify" class="btn btn-primary">
+                            <span class="btn-icon">✅</span> Verify This Key
+                        </a>
+                        <button onclick="downloadKey()" class="btn btn-secondary">
+                            <span class="btn-icon">💾</span> Download Info
+                        </button>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <strong>⚠️ Important Instructions:</strong>
+                    <ul>
+                        <li><strong>Save this key securely</strong> - You won't be able to see it again</li>
+                        <li>This is a <strong>trial key valid for 7 days</strong></li>
+                        <li>Can be activated on <strong>1 device only</strong></li>
+                        <li>You can generate another key in <strong>24 hours</strong></li>
+                        <li>For premium/extended keys, contact admin</li>
+                    </ul>
+                </div>
+
+                <button onclick="resetForm()" class="btn btn-secondary btn-block" style="margin-top: 1rem;">
+                    ← Back to Home
+                </button>
+            </div>
+
+            <!-- Rate Limit State -->
+            <div id="rateLimitState" class="get-key-box" style="display: none;">
+                <div class="rate-limit-content">
+                    <div class="rate-limit-icon">⏳</div>
+                    <h2>Rate Limit Reached</h2>
+                    <p>You've already generated a free key today</p>
+                    
+                    <div class="countdown-box">
+                        <div class="countdown-label">Next key available in:</div>
+                        <div class="countdown-timer" id="rateLimitTimer">23:59:59</div>
+                    </div>
+
+                    <div class="rate-limit-info">
+                        <p><strong>Why the limit?</strong></p>
+                        <p>To ensure fair usage, each user can generate 1 free trial key per day.</p>
+                    </div>
+
+                    <div class="upgrade-section">
+                        <h3>Need More Keys?</h3>
+                        <p>Upgrade to premium for unlimited key generation</p>
+                        <a href="/admin" class="btn btn-primary">Contact Admin</a>
+                    </div>
+
+                    <button onclick="goHome()" class="btn btn-secondary btn-block" style="margin-top: 1rem;">
+                        ← Back to Home
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script src="{{ url_for('static', filename='js/key-generator.js') }}"></script>
 </body>
 </html>
