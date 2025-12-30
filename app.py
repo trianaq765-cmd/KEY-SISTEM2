@@ -102,13 +102,14 @@ def generate_key():
     key_type = data.get('key_type', 'STANDARD')
     
     license_key = generate_license_key(prefix=key_type[:3].upper())
+    now = datetime.now()
     
     key_data = {
         'key': license_key,
         'key_hash': hash_key(license_key),
         'customer_name': customer_name,
-        'created_at': datetime.now().isoformat(),
-        'expires_at': (datetime.now() + timedelta(days=duration_days)).isoformat(),
+        'created_at': now.isoformat(),
+        'expires_at': (now + timedelta(days=duration_days)).isoformat(),
         'duration_days': duration_days,
         'key_type': key_type,
         'status': 'active',
@@ -124,6 +125,7 @@ def generate_key():
     return jsonify({
         'success': True,
         'license_key': license_key,
+        'created_at': key_data['created_at'],
         'expires_at': key_data['expires_at']
     })
 
@@ -131,17 +133,18 @@ def generate_key():
 def public_generate_key():
     """Public API to generate trial keys"""
     data = request.json
-    customer_name = data.get('customer_name', 'Anonymous')
+    customer_name = data.get('customer_name', 'Free Trial User')
     
     # Generate trial key (7 days, 1 activation)
     license_key = generate_license_key(prefix="TRL")
+    now = datetime.now()
     
     key_data = {
         'key': license_key,
         'key_hash': hash_key(license_key),
         'customer_name': customer_name,
-        'created_at': datetime.now().isoformat(),
-        'expires_at': (datetime.now() + timedelta(days=7)).isoformat(),
+        'created_at': now.isoformat(),
+        'expires_at': (now + timedelta(days=7)).isoformat(),
         'duration_days': 7,
         'key_type': 'TRIAL',
         'status': 'active',
@@ -157,6 +160,7 @@ def public_generate_key():
     return jsonify({
         'success': True,
         'license_key': license_key,
+        'created_at': key_data['created_at'],
         'expires_at': key_data['expires_at']
     })
 
